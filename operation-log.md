@@ -77,3 +77,10 @@
 - **结果**: ✅ https://www.phantomblade-0.wiki/favicon.ico = 200 (15406B, image/vnd.microsoft.icon)，head 标签齐全
 - **异常**: 无
 ---
+---
+### 2026-09-01 20:53-21:05 | Step 终验 | workflow-game-site / game-deploy-launch
+- **入参**: CF zone c310ee70777833b282d21d20af3e96e0 + Vercel prj_NCZBtrDV0f1kM3JmMiYSMo7QaqaM
+- **操作**: CF 激活（扬哥处理）→ 发现 sitemap 12 条 localhost（部署漏设 NEXT_PUBLIC_SITE_URL）→ Vercel API 补环境变量(type=encrypted,三环境) → gitSource 重部署 dpl_DpVz6WFKeDmuqhW5o21nvrxDbjkr → READY
+- **结果**: ✅ 终验全过：sitemap 12 URL 全 200 且无 localhost + favicon 200 + apex 308 → https://www.thebloodofdawnwalker.site 正式上线
+- **异常**: 教训——Phase 8.2 建 Vercel 项目时漏设 NEXT_PUBLIC_SITE_URL（game-deploy-launch 环境变量坑#1），已固化进 workflow-game-site Phase 8.2 流程；v13 部署 API 需要 name 属性、env API 需要 type 属性（已记）
+---
