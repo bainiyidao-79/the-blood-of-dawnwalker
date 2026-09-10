@@ -77,8 +77,8 @@ export const siteConfig: SiteConfig = {
   primaryCtaHref: "/intro/what-is-the-blood-of-dawnwalker",
 
   ads: {
-    sidebar: `<script async="async" data-cfasync="false" src="https://pl31036462.profitableratecpmnetwork.com/451eb73e616cf113813a1a0246327f1c/invoke.js"></script> <div id="container-451eb73e616cf113813a1a0246327f1c"></div>`,
-    footerBanner: `<script> atOptions = { 'key' : '0956a07eeaa1b83c5493388661a88e44', 'format' : 'iframe', 'height' : 90, 'width' : 728, 'params' : {} }; </script> <script src="https://www.highrevenueformat.com/0956a07eeaa1b83c5493388661a88e44/invoke.js"></script>`,
+    sidebar: `<script async="async" data-cfasync="false" src="https://pl31264315.profitableratecpmnetwork.com/f556ed975d3a9bff36ad2df1eabb8341/invoke.js"></script> <div id="container-f556ed975d3a9bff36ad2df1eabb8341"></div>`,
+    footerBanner: `<script> atOptions = { 'key' : 'e99505012d4fd7e3c275f58797a768e1', 'format' : 'iframe', 'height' : 90, 'width' : 728, 'params' : {} }; </script> <script src="https://www.highrevenueformat.com/e99505012d4fd7e3c275f58797a768e1/invoke.js"></script>`,
   },
   platformUrl: "https://store.steampowered.com/app/3751260/The_Blood_of_Dawnwalker/",
 
