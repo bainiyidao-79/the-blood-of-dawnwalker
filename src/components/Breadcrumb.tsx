@@ -1,7 +1,11 @@
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
 
-export function Breadcrumb({ items }: { items: { label: string; href?: string }[] }) {
+export function Breadcrumb({
+  items,
+}: {
+  items: { label: string; href?: string }[];
+}) {
   return (
     <nav className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
       <Link href="/" className="transition hover:text-foreground">

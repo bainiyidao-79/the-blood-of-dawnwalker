@@ -22,6 +22,19 @@ export type Article = {
 
 const contentRoot = path.join(process.cwd(), "src", "content", "en");
 
+function toMeta(slug: string, data: Record<string, unknown>, fallback: string): ArticleMeta {
+  return {
+    slug,
+    title: String(data.title ?? slug),
+    description: String(data.description ?? ""),
+    date: String(data.date ?? ""),
+    updated: String(data.updated ?? data.date ?? ""),
+    category: String(data.category ?? fallback),
+    keywords: Array.isArray(data.keywords) ? data.keywords.map(String) : [],
+    readTime: String(data.readTime ?? ""),
+  };
+}
+
 export function listSections(): string[] {
   if (!fs.existsSync(contentRoot)) return [];
   return fs
@@ -41,16 +54,7 @@ export function listArticles(section: string): ArticleMeta[] {
       const slug = file.replace(/\.mdx$/, "");
       const raw = fs.readFileSync(path.join(dir, file), "utf-8");
       const { data } = matter(raw);
-      return {
-        slug,
-        title: String(data.title ?? slug),
-        description: String(data.description ?? ""),
-        date: String(data.date ?? ""),
-        updated: String(data.updated ?? data.date ?? ""),
-        category: String(data.category ?? section),
-        keywords: Array.isArray(data.keywords) ? data.keywords.map(String) : [],
-        readTime: String(data.readTime ?? ""),
-      };
+      return toMeta(slug, data, section);
     })
     .sort((a, b) => (a.date < b.date ? 1 : -1));
 }
@@ -60,29 +64,18 @@ export function getArticle(section: string, slug: string): Article | null {
   if (!fs.existsSync(file)) return null;
   const raw = fs.readFileSync(file, "utf-8");
   const { data, content } = matter(raw);
-  return {
-    slug,
-    meta: {
-      slug,
-      title: String(data.title ?? slug),
-      description: String(data.description ?? ""),
-      date: String(data.date ?? ""),
-      updated: String(data.updated ?? data.date ?? ""),
-      category: String(data.category ?? section),
-      keywords: Array.isArray(data.keywords) ? data.keywords.map(String) : [],
-      readTime: String(data.readTime ?? ""),
-    },
-    content,
-  };
+  return { slug, meta: toMeta(slug, data, section), content };
 }
 
 // 栏目显示名（新增栏目时在此补一条）
 const sectionLabels: Record<string, string> = {
-  intro: "Game Info",
-  combat: "Combat",
-  weapons: "Weapons & Gear",
-  release: "Release",
-  guide: "Guides",
+  walkthrough: "Walkthrough",
+  endings: "Endings",
+  locations: "Locations",
+  achievements: "Achievements",
+  "side-quests": "Side Quests",
+  characters: "Characters",
+  systems: "Systems",
 };
 
 export function getSectionLabel(section: string): string {

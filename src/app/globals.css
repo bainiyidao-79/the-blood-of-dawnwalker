@@ -2,35 +2,50 @@
 
 /*
  * ============================================================
- * THEME TOKENS — 配色方案注入点（扬哥确立的建站方法论）
+ * THEME TOKENS — 配色方案注入点
  *
  * 骨架不定死配色。选骨架装素材时，先取游戏官方美术（官网/Steam
- * 头图/宣传图），用视觉模型提取配色，再覆盖下面的变量。
- * 默认值 = 中性深色游戏风（参考 vvultimatum.net 源站）。
+ * 头图/宣传图），用视觉模型提取配色，再覆盖下面【三个主槽位】。
+ *
+ * 规则（本骨架硬约束）：
+ *   1. 组件里禁止写死色值，一律走下面的 token（bg-card / text-muted-foreground ...）。
+ *   2. 派生槽位（背景/卡片/边框/正文…）只能由三个主槽位 color-mix 得出，
+ *      改主槽位 = 全站换皮；禁止单独写死派生槽位。
+ *   3. 默认值 = 深色底 + 橙红强调（与配套风格包 游侠style 一致）。
  * ============================================================
  */
 @theme {
-  /* Phantom Blade Zero 官方配色（从 Steam 官方头图提取，2026-08-29）
-   * 深灰绿黑底 #0E1211 + 古铜金 #C59A4D（刀刃金属高光）+ 亮金光晕 #E3B867 */
-  --color-background: #0e1211;
-  --color-foreground: #e3dfd7;
-  --color-card: #161c1a;
-  --color-card-foreground: #e3dfd7;
-  --color-muted: #1d2422;
-  --color-muted-foreground: #a8b0ab;
-  --color-border: #27302c;
-  --color-ring: #3a4640;
+  /* ---- 三个主槽位（每站由 g-art-design 覆盖；唯一需要改的三行）---- */
+  --color-primary: #ff3c02; /* 主色：按钮/高亮/分隔线 */
+  --color-accent: #ff6a00; /* 强调色：徽标/次级装饰 */
+  --color-auxiliary: #c1b597; /* 辅助色：正文亮色/次级文字倾向 */
 
-  /* 主色（按钮/链接/高亮）：古铜金；光晕：亮金 */
-  --color-primary: #c59a4d;
-  --color-primary-foreground: #171207;
-  --color-glow: #e3b867;
+  /* ---- 派生槽位（只允许 mix 上面三行，禁止写死）---- */
+  --color-background: color-mix(in oklab, var(--color-primary) 3%, #0e0e10);
+  --color-foreground: color-mix(in oklab, var(--color-auxiliary) 14%, #f7f7f7);
+  --color-card: color-mix(in oklab, var(--color-primary) 4%, #131316);
+  --color-card-foreground: var(--color-foreground);
+  --color-muted: color-mix(in oklab, var(--color-auxiliary) 7%, #1a1a1f);
+  --color-muted-foreground: color-mix(in oklab, var(--color-auxiliary) 40%, #949494);
+  --color-border: color-mix(in oklab, var(--color-primary) 12%, #26262b);
+  --color-ring: color-mix(in oklab, var(--color-primary) 45%, #4a4a50);
+  --color-primary-foreground: #ffffff;
+  --color-accent-foreground: #1a0d05;
 
-  /* 强调色：深金（提亮保证暗底可读） */
-  --color-accent: #a5824f;
-  --color-accent-foreground: #171207;
+  /* 玻璃面板（原站 rgba(19,19,19,.8) + blur） */
+  --color-glass: rgba(19, 19, 19, 0.8);
+  /* 面板底色（原站主板块 rgba(0,0,0,.88)） */
+  --color-panel: rgba(0, 0, 0, 0.88);
+  /* 橙色 1px 分隔线（原站 M3Line rgba(255,60,0,.36)） */
+  --color-line-accent: color-mix(in oklab, var(--color-primary) 36%, transparent);
+  /* 小方按钮 hover 描边 */
+  --color-btn-hover: #ffffff;
+  /* 「更多」展开文字（原站 #d96d6d） */
+  --color-more: color-mix(in oklab, var(--color-primary) 62%, #ffffff);
+  /* 视频/轮播封面底部压暗遮罩 */
+  --color-scrim: rgba(0, 0, 0, 0.59);
 
-  --radius: 0.625rem;
+  --radius: 0.5rem;
 }
 
 @layer base {
@@ -50,68 +65,174 @@
   }
 }
 
-@layer utilities {
-  /* 顶部光晕：主色 radial 渐变氛围（源站同款手法） */
-  .glow-top {
-    background:
-      radial-gradient(
-        circle at top,
-        color-mix(in oklab, var(--color-glow) 18%, transparent),
-        transparent 48%
-      ),
-      linear-gradient(135deg, rgb(255 255 255 / 0.05), rgb(255 255 255 / 0));
+/* ============================================================
+ * 组件类（骨架自带，禁止单站私改：改样式走骨架版本迭代）
+ * ============================================================ */
+@layer components {
+  /* 内容容器：净宽 1200px（原站 ContentWrap），左右各留 16px 安全边距 */
+  .wrap-1200 {
+    width: 100%;
+    max-width: 1232px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 16px;
+    padding-right: 16px;
   }
-  /* CTA 大区块光晕 */
-  .glow-cta {
-    box-shadow: 0 0 120px color-mix(in oklab, var(--color-glow) 22%, transparent);
-  }
-  /* 区块标题下的渐变细线 */
-  .title-line {
-    height: 2px;
-    border: 0;
+
+  /* 信息卡标题下的装饰线（原站 270×6 线图） */
+  .title-rule {
+    width: 270px;
+    max-width: 100%;
+    height: 6px;
+    margin: 0 auto;
     background: linear-gradient(
       to right,
-      color-mix(in oklab, var(--color-glow) 70%, transparent),
+      transparent,
+      var(--color-line-accent),
       transparent
     );
   }
-  /* 眉标：小号全大写宽字距（游戏站标配） */
+
+  /* 半透明玻璃面板（信息卡/导航树容器） */
+  .glass {
+    background: var(--color-glass);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+  }
+
+  /* 主板块深底（首页攻略区 / 内容页正文底板） */
+  .panel {
+    background: var(--color-panel);
+  }
+
+  /* 小方按钮（原站 M3ListA li 179×28；hover 白描边 .3s） */
+  .btn-sq {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 28px;
+    padding: 0 8px;
+    font-size: 14px;
+    line-height: 1;
+    color: var(--color-foreground);
+    background: var(--color-muted);
+    border: 1px solid transparent;
+    transition: border-color 0.3s;
+  }
+  .btn-sq:hover {
+    border-color: var(--color-btn-hover);
+  }
+
+  /* 栏目分栏线：橙色 1px（原站 M3Line） */
+  .divider-accent {
+    height: 1px;
+    border: 0;
+    background: var(--color-line-accent);
+    margin: 10px 0;
+  }
+
+  /* 栏目标题（原站 M3Title 16px） */
+  .sec-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--color-foreground);
+    line-height: 1.4;
+  }
+
+  /* 「更多 ▼」展开（原站居中 12px 红字） */
+  .more-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    color: var(--color-more);
+    transition: opacity 0.2s;
+  }
+  .more-link:hover {
+    opacity: 0.8;
+  }
+
+  /* 封面底部压暗遮罩（轮播/视频标题衬底） */
+  .scrim-bottom {
+    background: linear-gradient(
+      to top,
+      var(--color-scrim) 0%,
+      color-mix(in oklab, var(--color-scrim) 60%, transparent) 45%,
+      transparent 100%
+    );
+  }
+
+  /* 轮播分页点：8×8 小方块，当前项横向拉长 14×8（原站） */
+  .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 0;
+    background: color-mix(in oklab, #ffffff 60%, transparent);
+    transition: width 0.3s, background-color 0.3s;
+  }
+  .dot-active {
+    width: 14px;
+    background: #ffffff;
+  }
+
+  /* 眉标：小号全大写宽字距 */
   .eyebrow {
     font-size: 10px;
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.2em;
-    color: color-mix(in oklab, var(--color-glow) 65%, white);
+    color: color-mix(in oklab, var(--color-primary) 65%, white);
+  }
+
+  /* 橙色主按钮（原站 96×32 橙底白字；文案用 View on Steam ↗，宽度随文案自适应） */
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 32px;
+    padding: 0 16px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--color-primary-foreground);
+    background: var(--color-primary);
+    transition: opacity 0.2s;
+  }
+  .btn-primary:hover {
+    opacity: 0.88;
   }
 }
 
-/* 文章排版样式（深色 prose，替代 @tailwindcss/typography） */
+/* ============================================================
+ * 正文排版（内容页左栏：宽行距 + 分段插图混排）
+ * ============================================================ */
 .prose {
   color: var(--color-foreground);
-  line-height: 1.75;
-  font-size: 1rem;
+  font-size: 1.0625rem;
+  /* 行距 2.0（2026-09-16 扬哥定：1.85 偏挤，有阅读压迫感） */
+  line-height: 2;
 }
 .prose h1 {
-  font-size: 1.875rem;
+  font-size: 1.75rem;
   font-weight: 700;
-  margin: 2rem 0 1rem;
-  line-height: 1.3;
+  margin: 1.5rem 0 1rem;
+  line-height: 1.35;
 }
 .prose h2 {
-  font-size: 1.5rem;
+  font-size: 1.35rem;
   font-weight: 700;
-  margin: 2rem 0 0.75rem;
-  line-height: 1.3;
+  margin: 2.6rem 0 1rem;
+  line-height: 1.45;
   padding-bottom: 0.375rem;
-  border-bottom: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-line-accent);
 }
 .prose h3 {
-  font-size: 1.25rem;
+  font-size: 1.125rem;
   font-weight: 600;
   margin: 1.5rem 0 0.5rem;
 }
 .prose p {
-  margin: 1rem 0;
+  /* 段间距 1.4rem（行距 2.0 配套） */
+  margin: 1.4rem 0;
 }
 .prose ul,
 .prose ol {
@@ -125,26 +246,22 @@
   list-style: decimal;
 }
 .prose li {
-  margin: 0.375rem 0;
+  margin: 0.6rem 0;
 }
 .prose a {
-  color: color-mix(in oklab, var(--color-glow) 80%, white);
+  color: var(--color-primary);
   text-decoration: underline;
   text-underline-offset: 2px;
-}
-.prose a:hover {
-  color: color-mix(in oklab, var(--color-glow) 60%, white);
 }
 .prose strong {
   font-weight: 600;
   color: #ffffff;
 }
 .prose blockquote {
-  border-left: 3px solid var(--color-glow);
+  border-left: 3px solid var(--color-primary);
   padding-left: 1rem;
   margin: 1.25rem 0;
   color: var(--color-muted-foreground);
-  font-style: italic;
 }
 .prose table {
   width: 100%;
@@ -167,34 +284,58 @@
   border-radius: 4px;
   padding: 0.125rem 0.375rem;
   font-size: 0.875em;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   color: var(--color-accent);
 }
-.prose pre {
-  background: #16161a;
-  color: #fafafa;
-  border: 1px solid var(--color-border);
-  border-radius: 8px;
-  padding: 1rem;
-  overflow-x: auto;
-  margin: 1.25rem 0;
-}
-.prose pre code {
-  background: transparent;
-  padding: 0;
-  color: inherit;
-}
 .prose img {
-  border-radius: 8px;
   max-width: 100%;
   height: auto;
+  border-radius: 8px;
 }
 .prose hr {
   border: 0;
   border-top: 1px solid var(--color-border);
   margin: 2rem 0;
 }
-.prose iframe {
-  margin: 1.25rem 0;
-  border-radius: 8px;
+
+/* 分段插图混排：图片浮动一侧、正文环绕（不整行占满）
+ * MDX 用法：<div class="art-ph pf-right"><img src="/images/x.jpg" alt=""></div> */
+.prose .art-ph {
+  float: right;
+  width: 300px;
+  margin: 0.35rem 0 0.9rem 1.25rem;
+}
+/* 首图引导大图（2026-09-16 扬哥定：标题/简介正下方通栏 16:9，进页瞬间可见） */
+.prose .art-ph.lead {
+  float: none;
+  width: 100%;
+  margin: 0 0 1.4rem;
+}
+.prose .art-ph.lead img {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+}
+.prose .art-ph.pf-left {
+  float: left;
+  margin: 0.35rem 1.25rem 0.9rem 0;
+}
+.prose .art-ph img {
+  display: block;
+  width: 100%;
+}
+.prose .art-ph figcaption {
+  margin-top: 0.375rem;
+  font-size: 0.75rem;
+  line-height: 1.5;
+  color: var(--color-muted-foreground);
+}
+@media (max-width: 640px) {
+  .prose .art-ph,
+  .prose .art-ph.pf-left {
+    float: none;
+    width: 100%;
+    margin: 1rem 0;
+  }
 }

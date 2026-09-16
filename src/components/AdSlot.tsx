@@ -10,8 +10,6 @@ type AdSlotProps = {
 /**
  * 通用广告位组件（骨架预制）。
  * 用法：在 site.ts 的 ads 配置里填入广告代码即可，无需改组件。
- * - ads.sidebar       → 侧边栏底部广告位（菜单栏下方）
- * - ads.footerBanner  → 页面底部 banner 广告位（每页页脚上方）
  */
 export function AdSlot({ code, label, className }: AdSlotProps) {
   if (!code) return null;

@@ -5,202 +5,257 @@ export const siteUrl = (
 export type NavLink = { label: string; href: string };
 export type NavGroup = { title: string; children: NavLink[] };
 
+/** 首页轮播页（固定 3 篇；少于 3 篇时轮播按实际条数渲染） */
+export type CarouselSlide = {
+  /** 轮播配图（放 public/images/，宽高比按 790:292 裁切） */
+  image: string;
+  title: string;
+  href: string;
+};
+
+/** 右侧游戏信息卡的字段行（原站字段：制作公司/发行公司/发售日期/游戏平台/游戏类型） */
+export type GameInfoField = { label: string; value: string };
+
+/** 左视频列的 YouTube 条目（官方频道代表作优先；2–4 个） */
+export type VideoItem = { youtubeId: string; title: string };
+
+/**
+ * 主题色 token 名（供组件以 var() 引用）。
+ * ⚠️ 色值唯一来源 = src/app/globals.css 的 @theme 块，本文件不重复定义色值。
+ * 每站正式配色由 g-art-design 从游戏官方素材提取后覆盖 globals.css 的三个主槽位。
+ */
+export const themeTokens = {
+  primary: "--color-primary",
+  accent: "--color-accent",
+  auxiliary: "--color-auxiliary",
+} as const;
+
 export type SiteConfig = {
+  /** 游戏名（全站唯一来源） */
   name: string;
   shortName: string;
-  description: string;
-  heroTitle: string;
-  heroSubtitle: string;
-  /** Hero 区顶部小徽章文字（如 "WIKI GUIDE"），空串则不显示 */
-  eyebrow?: string;
-  primaryCtaLabel: string;
-  primaryCtaHref: string;
 
-  // 官方链接
-  platformUrl?: string;
-  discordUrl?: string;
-  youtubeChannelUrl?: string;
+  /** SEO 三件套 */
+  seo: {
+    title: string;
+    description: string;
+    keywords: string;
+  };
 
-  // 顶部导航（Header 用的平铺链接；不填则取 nav 第一组前 4 项）
-  topNav?: NavLink[];
+  /** Hero 大图区（无顶栏，Hero 直顶） */
+  hero: {
+    /** keyart 大图路径；同时用作内容页右栏 banner */
+    image: string;
+    eyebrow?: string;
+    title: string;
+    subtitle?: string;
+  };
 
-  // 侧边栏目录树（按实际内容增减，不做死链接）
+  /** 首页横向轮播：3 篇，5s 自动换页 */
+  carousel: {
+    autoPlayMs: number;
+    slides: CarouselSlide[];
+  };
+
+  /** 右侧游戏信息卡 */
+  gameInfo: {
+    title: string;
+    /** 封面图路径（125×166 比例） */
+    cover: string;
+    fields: GameInfoField[];
+    /** Steam 入口按钮（文案统一 View on Steam ↗） */
+    ctaLabel: string;
+    ctaHref: string;
+  };
+
+  /** 左视频列 YouTube id 列表（2–4 个，数量由右攻略区高度反推） */
+  videos: VideoItem[];
+
+  /** 官方链接（页脚展示；建议至少 1 条，其余留空则不渲染） */
+  officialLinks: NavLink[];
+
+  /** 全站攻略导航分组（首页攻略区 / 内容页右栏导航树共用；每站按真实内容增减） */
   nav: NavGroup[];
 
-  // 首页 YouTube 视频（官方频道代表作 > 播放量最高热门视频）
-  heroVideo?: {
-    youtubeId: string;
-    title?: string;
-    description?: string;
+  /** 栏目简介（栏目页 L2 顶部一段话，key=section 目录名；缺省回退到「N guides…」） */
+  sectionIntros?: Record<string, string>;
+
+  /** 栏目兑底图池：内容页缺图时按栏目取图，避免与右栏 keyart 同图同屏（扬哥 2026-09-16） */
+  sectionFallbackImages?: Record<string, string>;
+
+  /** 页脚 */
+  footer: {
+    copyright: string;
+    contactLabel: string;
+    /** 联系方式（邮箱/表单链接文本）；不填则页脚不显示联系位 */
+    contact?: string;
   };
 
-  // 首页「Trending Now」：精选文章（不填则整块隐藏）
-  trending?: { label: string; href: string; description?: string }[];
-
-  // 首页「What is <Game>?」介绍区（不填则整块隐藏）
-  gameIntro?: {
-    title?: string;
-    paragraphs: string[];
-    facts?: { label: string; value: string }[];
-  };
-
-  // 底部 CTA 大横幅（光晕容器，不填则整块隐藏）
-  ctaBanner?: {
-    title: string;
-    description?: string;
-    buttonLabel: string;
-    buttonHref: string;
-  };
-
-  // 广告位（骨架预制）：填入广告代码（HTML/JS）即生效；留空则完全不渲染不占位
+  /** 广告位（骨架预制）：填入广告代码（HTML/JS）即生效；留空则完全不渲染不占位 */
   ads?: {
-    /** 侧边栏底部广告位（菜单栏下方） */
-    sidebar?: string;
+    /** 首页攻略区顶部 banner（内容区宽度） */
+    contentBanner?: string;
     /** 页面底部 banner 广告位（页脚上方，每页都有） */
     footerBanner?: string;
+    /** 正文中横幅广告位（728×90）：位置在第一屏之后，长文自动多插一个位（同一份代码可多处复用） */
+    articleInline?: string;
+    /** 正文第二坑位代码（扬哥 2026-09-16：长文双广告位时用不同代码/创意，避免同屏重复）；缺省回退 articleInline */
+    articleInline2?: string;
+    /** 左右浮动竖幅 160×600 旧写法：只填此字段=左右共用同一单元（同屏创意相同） */
+    sideRail?: string;
+    /** 左侧竖幅广告单元（独立 key=独立竞价/创意/统计；优先于 sideRail） */
+    sideRailLeft?: string;
+    /** 右侧竖幅广告单元（独立 key=独立竞价/创意/统计；优先于 sideRail） */
+    sideRailRight?: string;
   };
-
-  // 可选：FAQ
-  faq?: { question: string; answer: string }[];
 };
 
 export const siteConfig: SiteConfig = {
   name: "The Blood of Dawnwalker Wiki",
-  shortName: "Dawnwalker Wiki",
-  description:
-    "The Blood of Dawnwalker wiki — Rebel Wolves' open-world dark fantasy action RPG releasing September 3, 2026 on PS5, Xbox Series X|S and PC. Vampire mechanics, story and setting (Coen), system requirements, gameplay length, editions and everything we know.",
-  heroTitle: "The Blood of Dawnwalker Wiki",
-  heroSubtitle:
-    "Guides and answers for Rebel Wolves' vampire action RPG — story, vampire mechanics, release info, requirements, and more",
-  eyebrow: "Wiki Guide",
-  primaryCtaLabel: "What is The Blood of Dawnwalker?",
-  primaryCtaHref: "/intro/what-is-the-blood-of-dawnwalker",
+  shortName: "Dawnwalker",
 
-  ads: {
-    sidebar: `<script async="async" data-cfasync="false" src="https://pl31264315.profitableratecpmnetwork.com/f556ed975d3a9bff36ad2df1eabb8341/invoke.js"></script> <div id="container-f556ed975d3a9bff36ad2df1eabb8341"></div>`,
-    footerBanner: `<script> atOptions = { 'key' : 'e99505012d4fd7e3c275f58797a768e1', 'format' : 'iframe', 'height' : 90, 'width' : 728, 'params' : {} }; </script> <script src="https://www.highrevenueformat.com/e99505012d4fd7e3c275f58797a768e1/invoke.js"></script>`,
-  },
-  platformUrl: "https://store.steampowered.com/app/3751260/The_Blood_of_Dawnwalker/",
-
-  // 顶部导航（全部指向真实内容，无死链）
-  topNav: [
-    { label: "What is The Blood of Dawnwalker?", href: "/intro/what-is-the-blood-of-dawnwalker" },
-    { label: "Release Date & Platforms", href: "/release/release-date-and-platforms" },
-    { label: "Vampire Mechanics", href: "/guide/vampire-mechanics" },
-    { label: "FAQ", href: "/guide/faq-everything-we-know" },
-  ],
-
-  // 侧边栏目录树（8 篇真实文章，随内容增补同步登记）
-  nav: [
-    {
-      title: "Game Info",
-      children: [
-        { label: "What is The Blood of Dawnwalker?", href: "/intro/what-is-the-blood-of-dawnwalker" },
-        { label: "Story & Setting", href: "/intro/story-and-setting" },
-      ],
-    },
-    {
-      title: "Guides & FAQ",
-      children: [
-        { label: "Vampire Mechanics", href: "/guide/vampire-mechanics" },
-        { label: "How Long to Beat", href: "/guide/how-long-to-beat" },
-        { label: "PC System Requirements", href: "/guide/system-requirements" },
-        { label: "FAQ: Everything We Know", href: "/guide/faq-everything-we-know" },
-      ],
-    },
-    {
-      title: "Release & Buy",
-      children: [
-        { label: "Release Date & Platforms", href: "/release/release-date-and-platforms" },
-        { label: "Price & Editions", href: "/release/price-and-editions" },
-      ],
-    },
-  ],
-
-  // 首页嵌入：官方 Dawnwalker 频道代表作（Everything You Need to Know, 210k+ views）
-  heroVideo: {
-    youtubeId: "Lyqm6Y5pBms",
-    title: "The Blood of Dawnwalker — Everything You Need to Know",
+  seo: {
+    title: "The Blood of Dawnwalker Wiki — Guides, Endings & Gear",
     description:
-      "The official overview from the Dawnwalker channel — the dark fantasy world of 14th-century Europe, Coen's curse, and how the day-night cycle shapes the game.",
+      "Fan-made The Blood of Dawnwalker wiki: prologue walkthrough, all seven endings, legendary equipment locations, every character, and the 30-day time system explained.",
+    keywords:
+      "the blood of dawnwalker, dawnwalker wiki, dawnwalker guide, dawnwalker walkthrough, dawnwalker endings",
   },
 
-  // Trending Now：精选文章
-  trending: [
-    {
-      label: "What is The Blood of Dawnwalker?",
-      href: "/intro/what-is-the-blood-of-dawnwalker",
-      description:
-        "Rebel Wolves' open-world dark fantasy action RPG — play as Coen, human by day and vampire by night, in 14th-century Europe.",
-    },
-    {
-      label: "Release Date & Platforms",
-      href: "/release/release-date-and-platforms",
-      description:
-        "Launching September 2, 2026 on PS5 and PC (Steam, Epic). Regional unlock times and platform details.",
-    },
-    {
-      label: "Vampire Mechanics",
-      href: "/guide/vampire-mechanics",
-      description:
-        "Human by day, vampire by night — how the blood-thirst system, vampire powers, and the skill tree work.",
-    },
-    {
-      label: "How Long to Beat",
-      href: "/guide/how-long-to-beat",
-      description:
-        "Campaign length, side content, and how the day-night structure affects a full playthrough.",
-    },
-  ],
+  hero: {
+    image: "/images/hero-keyart.jpg",
+    eyebrow: "Wiki Guide",
+    title: "The Blood of Dawnwalker",
+    subtitle: "Walkthrough · Endings · Legendary Gear · Characters · Systems",
+  },
 
-  // What is 区块：基于官方 Steam 资料与已验证素材
-  gameIntro: {
-    title: "What is The Blood of Dawnwalker?",
-    paragraphs: [
-      "The Blood of Dawnwalker is an open-world dark fantasy action RPG developed by Rebel Wolves — a studio founded by veteran CD Projekt Red developers — and published by Bandai Namco Entertainment. It launches on September 3, 2026 for PlayStation 5, Xbox Series X|S and PC (Steam and GOG).",
-      "Set in 14th-century Europe, the game puts you in the shoes of Coen, a young man turned vampire who is human by day and a creature of the night after dark. Racing against time to save his family, Coen must master both sides of his nature — because every choice, and every hour of daylight spent, shapes how his story unfolds.",
+  carousel: {
+    autoPlayMs: 5000,
+    slides: [
+      {
+        image: "/images/slide-walkthrough.jpg",
+        title: "Prologue Walkthrough: All Good Things & Withering Away",
+        href: "/walkthrough/prologue-and-opening-quests",
+      },
+      {
+        image: "/images/slide-endings.jpg",
+        title: "All 7 Endings Explained",
+        href: "/endings/all-endings-explained",
+      },
+      {
+        image: "/images/slide-locations.jpg",
+        title: "Legendary Equipment Locations — Full Checklist",
+        href: "/locations/legendary-equipment-locations",
+      },
     ],
-    facts: [
+  },
+
+  gameInfo: {
+    title: "The Blood of Dawnwalker",
+    cover: "/images/cover.jpg",
+    fields: [
       { label: "Developer", value: "Rebel Wolves" },
       { label: "Publisher", value: "Bandai Namco Entertainment" },
-      { label: "Genre", value: "Open-world dark fantasy action RPG" },
-      { label: "Platforms", value: "PS5, Xbox Series X|S & PC (Steam, GOG)" },
-      { label: "Release date", value: "September 3, 2026" },
-      { label: "Price", value: "$69.99" },
+      { label: "Release Date", value: "September 3, 2026" },
+      { label: "Platforms", value: "PC, PS5, Xbox Series X|S" },
+      { label: "Genre", value: "Dark Fantasy Action RPG" },
     ],
+    ctaLabel: "View on Steam ↗",
+    ctaHref: "https://store.steampowered.com/app/3751260/The_Blood_of_Dawnwalker/",
   },
 
-  // 底部 CTA 大横幅
-  ctaBanner: {
-    title: "Preparing for The Blood of Dawnwalker?",
-    description:
-      "Start with the vampire mechanics — the day-night loop that changes how every quest and fight works.",
-    buttonLabel: "Read the Vampire Mechanics Guide",
-    buttonHref: "/guide/vampire-mechanics",
-  },
+  videos: [
+    { youtubeId: "MWsyV7yQIBQ", title: "The Blood of Dawnwalker — Cinematic Trailer (Bandai Namco)" },
+    { youtubeId: "FC_bDk-I7F4", title: "Launch Trailer (PlayStation)" },
+    { youtubeId: "Fn7aYRVyRMM", title: "Story Trailer (Bandai Namco)" },
+  ],
 
-  faq: [
+  officialLinks: [
+    { label: "Steam", href: "https://store.steampowered.com/app/3751260/The_Blood_of_Dawnwalker/" },
+  ],
+
+  nav: [
     {
-      question: "What is The Blood of Dawnwalker?",
-      answer:
-        "The Blood of Dawnwalker is an open-world dark fantasy action RPG by Rebel Wolves and Bandai Namco. You play as Coen, human by day and vampire by night, fighting to save his family in 14th-century Europe.",
+      title: "Walkthrough",
+      children: [
+        { label: "Game Overview", href: "/walkthrough/game-overview" },
+        { label: "Prologue Walkthrough", href: "/walkthrough/prologue-and-opening-quests" },
+        { label: "All Good Things", href: "/walkthrough/all-good-things" },
+        { label: "Withering Away", href: "/walkthrough/withering-away" },
+        { label: "Page-Turner", href: "/walkthrough/page-turner" },
+        { label: "Like Father, Like Son", href: "/walkthrough/like-father-like-son" },
+        { label: "Live Bait", href: "/walkthrough/live-bait" },
+        { label: "Someone Needs a Lesson", href: "/walkthrough/someone-needs-a-lesson" },
+        { label: "Blasphemy", href: "/walkthrough/blasphemy" },
+        { label: "On the Run", href: "/walkthrough/on-the-run" },
+        { label: "Disturbed", href: "/walkthrough/disturbed" },
+        { label: "Sacred Covenant", href: "/walkthrough/sacred-covenant" },
+        { label: "Bad Blood", href: "/walkthrough/bad-blood" },
+        { label: "Smoke and Ashes", href: "/walkthrough/smoke-and-ashes" },
+        { label: "From Above", href: "/walkthrough/from-above" },
+        { label: "The Firebrand", href: "/walkthrough/the-firebrand" },
+        { label: "Roadside Surprise", href: "/walkthrough/roadside-surprise" },
+        { label: "Shadows in the Woods", href: "/walkthrough/shadows-in-the-woods" },
+        { label: "Under Watchful Eyes", href: "/walkthrough/under-watchful-eyes" },
+        { label: "Evil and Convenience", href: "/walkthrough/evil-and-convenience" },
+        { label: "The Cursed Chasm", href: "/walkthrough/the-cursed-chasm" },
+        { label: "Fate's Mercy", href: "/walkthrough/fates-mercy" },
+        { label: "Bounty of the Mire", href: "/walkthrough/bounty-of-the-mire" },
+        { label: "Good Home", href: "/walkthrough/good-home" },
+        { label: "Following the Sound", href: "/walkthrough/following-the-sound" },
+        { label: "Where Old Demons Sleep", href: "/walkthrough/where-old-demons-sleep" },
+        { label: "Beyond Achilles", href: "/walkthrough/beyond-achilles" },
+      ],
     },
     {
-      question: "When does The Blood of Dawnwalker come out?",
-      answer:
-        "The Blood of Dawnwalker launches on September 3, 2026 for PlayStation 5, Xbox Series X|S and PC (Steam and GOG). Some regional store listings show a September 2 unlock — that's a time-zone artifact of the same launch moment.",
+      title: "Endings",
+      children: [{ label: "All Endings Explained", href: "/endings/all-endings-explained" }],
     },
     {
-      question: "How much does The Blood of Dawnwalker cost?",
-      answer:
-        "The Blood of Dawnwalker costs $69.99 on both PS5 and PC, with a Collector's Edition available.",
+      title: "Locations",
+      children: [{ label: "Legendary Equipment Locations", href: "/locations/legendary-equipment-locations" }],
     },
     {
-      question: "Do you play as a vampire in The Blood of Dawnwalker?",
-      answer:
-        "Yes — Coen is a dawnwalker: human by day and vampire by night. The day-night cycle is central to both the story and the gameplay, with vampire powers unlocked at night.",
+      title: "Characters",
+      children: [{ label: "Characters & Cast Guide", href: "/characters/characters-and-cast" }],
+    },
+    {
+      title: "Systems",
+      children: [
+        { label: "Extending the 30-Day Timer", href: "/systems/extending-the-30-day-timer" },
+        { label: "Shapeshift & Wolf Form", href: "/systems/transformation-system" },
+        { label: "Fast Money", href: "/systems/fast-money" },
+        { label: "Leveling Fast", href: "/systems/leveling-fast" },
+        { label: "DLSS 5 Setup", href: "/systems/dlss5-guide" },
+      ],
     },
   ],
 
-  // 广告位：待扬哥创建 Adsterra 单元后填入
+  sectionIntros: {
+    walkthrough: "Quest-by-quest walkthroughs for The Blood of Dawnwalker: the full prologue, every Day 1 chain, the Ambrus arc, the Sanzhana extra-day tasks and Anca's ruin dives — with the dialogue picks that matter.",
+    endings: "Every ending explained: the choices, conditions and story branches that decide how Coen's tale concludes.",
+    locations: "Collectible and gear locations across the Vale Sangora region, with map references for every legendary pick.",
+    characters: "The cast of The Blood of Dawnwalker: who they are, how to meet them and which bonds matter.",
+    systems: "Core systems explained: the 30-day day-night clock, dialogue colors, vampire abilities and progression.",
+  },
+
+  sectionFallbackImages: {
+    walkthrough: "/images/slide-walkthrough.jpg",
+    endings: "/images/slide-endings.jpg",
+    locations: "/images/slide-locations.jpg",
+    characters: "/images/slide-endings.jpg",
+    systems: "/images/slide-locations.jpg",
+  },
+
+  footer: {
+    copyright:
+      "Fan-made wiki. Not affiliated with Rebel Wolves or Bandai Namco Entertainment.",
+    contactLabel: "Contact",
+  },
+
+  ads: {
+    // 沿用旧站已登记的 Adsterra 单元（2026-09-17 迁移）
+    footerBanner: `<script> atOptions = { 'key' : 'e99505012d4fd7e3c275f58797a768e1', 'format' : 'iframe', 'height' : 90, 'width' : 728, 'params' : {} }; </script> <script src="https://www.highrevenueformat.com/e99505012d4fd7e3c275f58797a768e1/invoke.js"></script>`,
+    sideRailRight: `<script async="async" data-cfasync="false" src="https://pl31264315.profitableratecpmnetwork.com/f556ed975d3a9bff36ad2df1eabb8341/invoke.js"></script> <div id="container-f556ed975d3a9bff36ad2df1eabb8341"></div>`,
+  },
 };
