@@ -254,8 +254,38 @@ export const siteConfig: SiteConfig = {
   },
 
   ads: {
-    // 沿用旧站已登记的 Adsterra 单元（2026-09-17 迁移）
-    footerBanner: `<script> atOptions = { 'key' : 'e99505012d4fd7e3c275f58797a768e1', 'format' : 'iframe', 'height' : 90, 'width' : 728, 'params' : {} }; </script> <script src="https://www.highrevenueformat.com/e99505012d4fd7e3c275f58797a768e1/invoke.js"></script>`,
-    sideRailRight: `<script async="async" data-cfasync="false" src="https://pl31264315.profitableratecpmnetwork.com/f556ed975d3a9bff36ad2df1eabb8341/invoke.js"></script> <div id="container-f556ed975d3a9bff36ad2df1eabb8341"></div>`,
+    // 2026-09-17 广告四件套（单元代码存根目录 ads/*.txt）
+    footerBanner: `<script>
+  atOptions = {
+    'key' : 'e99505012d4fd7e3c275f58797a768e1',
+    'format' : 'iframe',
+    'height' : 90,
+    'width' : 728,
+    'params' : {}
+  };
+</script>
+<script src="https://www.highrevenueformat.com/e99505012d4fd7e3c275f58797a768e1/invoke.js"></script>`,
+    sideRailLeft: `<script>
+  atOptions = {
+    'key' : '372f17b8611398ecf9279a7b8205b7ca',
+    'format' : 'iframe',
+    'height' : 300,
+    'width' : 160,
+    'params' : {}
+  };
+</script>
+<script src="https://www.highrevenueformat.com/372f17b8611398ecf9279a7b8205b7ca/invoke.js"></script>`,
+    sideRailRight: `<script>
+  atOptions = {
+    'key' : '3356df97b722fa9ca698492adec71764',
+    'format' : 'iframe',
+    'height' : 600,
+    'width' : 160,
+    'params' : {}
+  };
+</script>
+<script src="https://www.highrevenueformat.com/3356df97b722fa9ca698492adec71764/invoke.js"></script>`,
+    articleInline: `<script async="async" data-cfasync="false" src="https://pl31264315.profitableratecpmnetwork.com/f556ed975d3a9bff36ad2df1eabb8341/invoke.js"></script>
+<div id="container-f556ed975d3a9bff36ad2df1eabb8341"></div>`,
   },
 };

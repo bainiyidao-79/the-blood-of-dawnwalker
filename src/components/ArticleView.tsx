@@ -81,6 +81,13 @@ function promoteLeadImage(html: string): string {
  *  - 正文中横幅广告位：第一屏之后出现；长文多坑位；第二坑位可用不同代码（ads.articleInline2，避免同创意）
  *  右侧栏 = 顶部 keyart banner（与首页 Hero 同一张图） + 分组可折叠的全站攻略导航树。
  */
+
+/** 广告位高度：atOptions 类按声明高渲染；容器类（native）给 480 全展示（2026-09-17 文内广告位） */
+function adHeightFor(code?: string): number {
+  const m = /'height'\s*:\s*(\d+)/.exec(code ?? "");
+  return m ? Number(m[1]) : 480;
+}
+
 export function ArticleView({
   title,
   description,
@@ -125,7 +132,7 @@ export function ArticleView({
                   <AdFrame
                     code={adCodes[index % adCodes.length]}
                     width={728}
-                    height={90}
+                    height={adHeightFor(adCodes[index % adCodes.length])}
                     label="In-article banner advertisement"
                     className="my-7"
                   />
