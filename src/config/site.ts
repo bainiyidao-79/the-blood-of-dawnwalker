@@ -265,16 +265,7 @@ export const siteConfig: SiteConfig = {
   };
 </script>
 <script src="https://www.highrevenueformat.com/e99505012d4fd7e3c275f58797a768e1/invoke.js"></script>`,
-    sideRailLeft: `<script>
-  atOptions = {
-    'key' : '372f17b8611398ecf9279a7b8205b7ca',
-    'format' : 'iframe',
-    'height' : 300,
-    'width' : 160,
-    'params' : {}
-  };
-</script>
-<script src="https://www.highrevenueformat.com/372f17b8611398ecf9279a7b8205b7ca/invoke.js"></script>`,
+    // sideRailLeft 暂停启用：160x300 单元暂无填充（代码存 ads/banner-160x300.txt，恢复时改回本行）
     sideRailRight: `<script>
   atOptions = {
     'key' : '3356df97b722fa9ca698492adec71764',

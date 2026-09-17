@@ -76,10 +76,13 @@ export function AdFrame({ code, width, height, label, className }: AdFrameProps)
       try {
         const doc = iframe.contentDocument;
         if (!doc || !doc.body) return null;
-        return Math.max(
-          doc.body.scrollHeight,
-          doc.documentElement?.scrollHeight ?? 0
-        );
+        // 只测内容高：documentElement.scrollHeight 会镜像 iframe 视口高
+        // （外层设多高它就多高），混入会导致“测出的永远是设定值”
+        const container = doc.querySelector<HTMLElement>('[id^="container-"]');
+        const ch = container
+          ? Math.max(container.offsetHeight, container.scrollHeight)
+          : 0;
+        return Math.max(ch, doc.body.scrollHeight);
       } catch {
         return null;
       }
