@@ -42,6 +42,7 @@ export function NavTree({ groups, limit = 6 }: { groups: NavGroup[]; limit?: num
                     : [...prev, group.title]
                 )
               }
+              title={group.title}
               className={`sec-title flex w-full items-center justify-between gap-2 border-b border-border/60 pb-1 text-left ${
                 group.title === activeGroup ? "text-primary" : "text-foreground"
               }`}
@@ -58,7 +59,7 @@ export function NavTree({ groups, limit = 6 }: { groups: NavGroup[]; limit?: num
               <>
                 <div className="mt-2 grid grid-cols-2 gap-2">
                   {shown.map((item) => (
-                    <Link key={item.href} href={item.href} className="btn-sq w-full text-[12px]">
+                    <Link key={item.href} href={item.href} className="btn-sq w-full text-[12px]" title={item.label}>
                       <span className="truncate">{item.label}</span>
                     </Link>
                   ))}

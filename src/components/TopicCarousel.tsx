@@ -59,6 +59,14 @@ export function TopicCarousel() {
         </div>
       ))}
 
+      {/* 整幅可点：点击图片任意位置跳转对应正文（2026-09-17 扬哥定，与标题同一链接） */}
+      <Link
+        href={current.href}
+        className="absolute inset-0"
+        aria-label={current.title}
+        title={current.title}
+      />
+
       {/* 当前页标题（点击进正文） */}
       <Link
         href={current.href}

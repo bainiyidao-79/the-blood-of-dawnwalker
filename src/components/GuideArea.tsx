@@ -33,7 +33,7 @@ export function GuideArea({ groups, limit = 8 }: { groups: NavGroup[]; limit?: n
             {/* 纵向间距 22（原站 15 偏挤，2026-09-16 扬哥定：上下别太挤）；横向保持 15 */}
             <div className="mt-[15px] flex flex-wrap gap-x-[15px] gap-y-[22px]">
               {shown.map((item) => (
-                <Link key={item.href} href={item.href} className="btn-sq w-full sm:w-[179px]">
+                <Link key={item.href} href={item.href} className="btn-sq w-full sm:w-[179px]" title={item.label}>
                   <span className="truncate">{item.label}</span>
                 </Link>
               ))}

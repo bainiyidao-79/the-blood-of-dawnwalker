@@ -147,7 +147,7 @@ export function ArticleView({
               <hr className="divider-accent" />
               <div className="flex flex-wrap gap-x-[15px] gap-y-[22px]">
                 {related.map((item) => (
-                  <Link key={item.href} href={item.href} className="btn-sq w-full sm:w-[179px]">
+                  <Link key={item.href} href={item.href} className="btn-sq w-full sm:w-[179px]" title={item.title}>
                     <span className="truncate">{item.title}</span>
                     <ChevronRight className="ml-1 h-3 w-3 shrink-0" aria-hidden />
                   </Link>
